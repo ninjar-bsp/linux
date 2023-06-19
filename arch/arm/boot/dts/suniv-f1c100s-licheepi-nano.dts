@@ -5,7 +5,6 @@
 
 /dts-v1/;
 #include "suniv-f1c100s.dtsi"
-
 #include <dt-bindings/gpio/gpio.h>
 
 / {
@@ -15,7 +14,9 @@
 	aliases {
 		mmc0 = &mmc0;
 		serial0 = &uart0;
+		serial2 = &uart2;
 		spi0 = &spi0;
+		spi1 = &spi1;
 	};
 
 	chosen {
@@ -28,6 +29,20 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 	};
+
+        leds: gpio-leds {
+               compatible = "gpio-leds";
+               pinctrl-names = "default";
+               status = "okay";
+
+               led@1 {
+                    gpios = <&pio 3 0 GPIO_ACTIVE_LOW>; /* PD0 */
+                    label = "status_led";
+                    lnux,default-trigger = "heartbeat";
+                    linux,default-trigger-delay-ms = <0>;
+               };  
+    };  
+
 };
 
 &mmc0 {
@@ -42,18 +57,48 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&spi0_pc_pins>;
 	status = "okay";
+	spi-max-frequency = <50000000>;
 
+/*
 	flash@0 {
 		#address-cells = <1>;
 		#size-cells = <1>;
 		compatible = "winbond,w25q128", "jedec,spi-nor";
 		reg = <0>;
-		spi-max-frequency = <40000000>;
+		spi-max-frequency = <50000000>;
 	};
+*/
+    spi-nand@0 {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "spi-nand";
+        reg = <0>;
+        spi-max-frequency = <50000000>;
+    };
 };
 
-&otg_sram {
-	status = "okay";
+&spi1 {
+	pinctrl-names = "default";
+        pinctrl-0 = <&spi1_pa_pins>;
+        status = "okay";
+        spi-max-frequency = <50000000>;
+
+        uc8253: uc8253@0 {
+                #address-cells = <1>;
+                #size-cells = <1>;
+                compatible = "ultrachip,uc8253";
+                reg = <0>;
+                spi-max-frequency = <10000000>;
+                buswidth = <8>;
+                xres = <256>;
+                yres = <256>;
+                spi-cpol;
+                spi-cpha;
+                reset-gpios = <&pio 4 10 GPIO_ACTIVE_HIGH>;
+                dc-gpios = <&pio 4 9 GPIO_ACTIVE_LOW>;
+                debug = <1>;
+                status = "okay";
+        };
 };
 
 &uart0 {
@@ -62,12 +107,22 @@
 	status = "okay";
 };
 
-&usb_otg {
-	dr_mode = "otg";
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pe_pins>;
 	status = "okay";
 };
 
+&otg_sram {
+    status = "okay";
+};
+
+&usb_otg {
+    dr_mode = "otg";
+    status = "okay";
+};
+
 &usbphy {
-	usb0_id_det-gpios = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
-	status = "okay";
+    usb0_id_det-gpio = <&pio 4 2 GPIO_ACTIVE_HIGH>; /* PE2 */
+    status = "okay";
 };

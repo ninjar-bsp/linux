@@ -198,6 +198,11 @@
 				function = "i2c0";
 			};
 
+			i2c0_pe_pins: i2c0-pe-pins {
+				pins = "PE11", "PE12";
+				function = "i2c0";
+			};
+
 			spi0_pc_pins: spi0-pc-pins {
 				pins = "PC0", "PC1", "PC2", "PC3";
 				function = "spi0";

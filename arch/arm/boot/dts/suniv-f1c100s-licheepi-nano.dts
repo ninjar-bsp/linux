@@ -37,7 +37,7 @@
         status = "okay";
 
         led@1 {
-            gpios = <&pio 3 0 GPIO_ACTIVE_LOW>; /* PD0 */
+            gpios = <&pio 4 5 GPIO_ACTIVE_LOW>; /* PE5 */
             label = "status_led";
             lnux,default-trigger = "heartbeat";
             linux,default-trigger-delay-ms = <0>;
